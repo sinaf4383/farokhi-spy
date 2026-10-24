@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>جاسوس‌خانه فرخی‌ها</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#0E1626">
+<style>
+  :root {
+    --bg: #EDF0F6;
+    --surface: #FFFFFF;
+    --text: #0F1A30;
+    --muted: #5B6B88;
+    --accent: #D62F3A;
+    --accent-text: #FFFFFF;
+    --line: #CBD3E2;
+    --bar: #0F1A30;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1626;
+      --surface: #17223A;
+      --text: #E9EEF8;
+      --muted: #93A3C0;
+      --accent: #FF5A5F;
+      --accent-text: #1A0B0C;
+      --line: #2A3858;
+      --bar: #05080F;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Tahoma, "Segoe UI", "Vazirmatn", system-ui, sans-serif;
+    line-height: 1.7;
+    padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+  }
+  #app { max-width: 460px; margin: 0 auto; padding: 24px 0 40px; }
+  h1 { font-size: 30px; margin: 0 0 4px; font-weight: 800; }
+  h2 { font-size: 22px; margin: 0 0 8px; font-weight: 700; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); font-size: 14px; }
+  .banner { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); margin-bottom: 14px; }
+  .brand { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+  .brand img { border-radius: 20px; flex: none; }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 16px 0;
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; }
+  .row + .row { border-top: 1px solid var(--line); }
+  .row label { font-size: 16px; }
+  .stepper { display: flex; align-items: center; gap: 6px; direction: ltr; }
+  .stepper button {
+    width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--text); font-size: 22px; cursor: pointer;
+  }
+  .stepper input {
+    width: 64px; height: 40px; text-align: center; font-size: 18px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--text);
+    font-family: inherit;
+  }
+  .nameinput { width: 60%; height: 40px; padding: 0 10px; font-size: 16px; font-family: inherit; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+  .toggle { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 15px; cursor: pointer; }
+  .toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .btn {
+    display: block; width: 100%; padding: 14px; font-size: 17px; font-weight: 700; font-family: inherit;
+    border: none; border-radius: 12px; cursor: pointer;
+    background: var(--accent); color: var(--accent-text);
+  }
+  .btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--line); margin-top: 10px; }
+  .btn:focus-visible, .stepper button:focus-visible, .stepper input:focus-visible, .toggle input:focus-visible {
+    outline: 3px solid var(--accent); outline-offset: 2px;
+  }
+  .error { color: var(--accent); font-size: 14px; min-height: 22px; margin: 4px 0 8px; }
+  .big-name { font-size: 40px; font-weight: 800; text-align: center; margin: 40px 0 10px; }
+  .center { text-align: center; }
+
+  /* dossier card */
+  .dossier {
+    position: relative; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; min-height: 260px; overflow: hidden; margin: 18px 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 28px 18px; text-align: center;
+  }
+  .dossier .tab {
+    position: absolute; top: 0; right: 18px; background: var(--bar); color: var(--bg);
+    font-size: 12px; padding: 4px 12px; border-radius: 0 0 8px 8px;
+  }
+  .dossier .cat { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
+  .dossier .word { font-size: 38px; font-weight: 800; word-break: break-word; }
+  .stamp {
+    font-size: 44px; font-weight: 900; color: var(--accent);
+    border: 4px solid var(--accent); border-radius: 10px; padding: 2px 22px;
+    transform: rotate(-6deg); display: inline-block;
+  }
+  .cover {
+    position: absolute; inset: 0; background: var(--bar); color: var(--bg);
+    border: 0; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .cover:focus-visible { outline: 3px solid var(--accent); outline-offset: -6px; }
+  .pop { animation: pop .28s ease-out; }
+  @keyframes pop { from { transform: scale(1.35) rotate(-6deg); opacity: 0; } to { transform: scale(1) rotate(-6deg); opacity: 1; } }
+  .word.pop { animation-name: pop-flat; }
+  @keyframes pop-flat { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .pop, .word.pop { animation: none; } }
+
+  .timer { font-size: 56px; font-weight: 800; text-align: center; direction: ltr; margin: 14px 0; }
+  .spies { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0 4px; }
+  .chip { border: 2px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 4px 16px; font-weight: 700; }
+  .progress { height: 6px; background: var(--line); border-radius: 6px; overflow: hidden; margin: 6px 0 18px; }
+  .progress > div { height: 100%; background: var(--accent); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ---------- Word bank: categories → words ---------- */
+const WORDS = {
+  "غذا": ["قورمه‌سبزی","قیمه","کباب کوبیده","جوجه کباب","آش رشته","آبگوشت","فسنجان","زرشک‌پلو","باقالی‌پلو","عدس‌پلو","کشک بادمجان","میرزا قاسمی","پیتزا","همبرگر","ساندویچ","لازانیا","اسپاگتی","سوشی","کتلت","شنیسل","حلیم","املت","نیمرو","سوپ جو","دلمه","کوکو سبزی","ماکارونی","فلافل","سیب‌زمینی سرخ‌کرده","لوبیا پلو","تاس کباب","خورشت بامیه","کله‌پاچه"],
+  "میوه و سبزی": ["سیب","پرتقال","موز","انگور","هندوانه","خربزه","گیلاس","آلبالو","توت‌فرنگی","آناناس","انار","انجیر","خرما","کیوی","هلو","زردآلو","گلابی","نارگیل","لیمو","گوجه","خیار","هویج","بادمجان","کدو","سیب‌زمینی","پیاز","سیر","فلفل دلمه‌ای","اسفناج","کاهو","کلم","قارچ","ذرت","نخود سبز"],
+  "حیوان": ["شیر","ببر","فیل","زرافه","میمون","خرس","گرگ","روباه","خرگوش","گربه","سگ","اسب","الاغ","گاو","گوسفند","بز","شتر","پنگوئن","کانگورو","کوالا","دلفین","نهنگ","کوسه","اختاپوس","لاک‌پشت","مار","کروکودیل","عقاب","جغد","طاووس","کبوتر","پروانه","زنبور","مورچه","خفاش"],
+  "شغل": ["معلم","دکتر","پرستار","مهندس","خلبان","راننده","آشپز","نانوا","قصاب","آرایشگر","نقاش ساختمان","برقکار","لوله‌کش","جوشکار","نجار","خیاط","عکاس","خبرنگار","وکیل","قاضی","پلیس","آتش‌نشان","نظامی","کشاورز","دامپزشک","داروساز","دندانپزشک","برنامه‌نویس","نویسنده","بازیگر","خواننده","فضانورد","باغبان","کفاش","مکانیک"],
+  "مکان": ["مدرسه","بیمارستان","فرودگاه","ایستگاه قطار","سینما","پارک","کتابخانه","موزه","مسجد","بازار","سوپرمارکت","داروخانه","استخر","ورزشگاه","رستوران","قهوه‌خانه","هتل","زندان","ساحل","جنگل","کوه","کویر","غار","آسمان‌خراش","پمپ بنزین","آرایشگاه","نانوایی","دانشگاه","شهربازی","باغ وحش","کارخانه","مزرعه","اداره پست","بانک","کمپ"],
+  "شهر و کشور": ["تهران","اصفهان","شیراز","تبریز","مشهد","یزد","کرمان","رشت","اهواز","بندرعباس","کیش","ترکیه","ژاپن","چین","هند","روسیه","آلمان","فرانسه","ایتالیا","اسپانیا","برزیل","آرژانتین","مصر","استرالیا","کانادا","آمریکا","انگلیس","سوئیس","دبی","پاریس","لندن","رم","استانبول","نیویورک","توکیو"],
+  "وسایل خانه": ["یخچال","تلویزیون","فرش","مبل","کمد","آینه","پرده","لامپ","جاروبرقی","ماشین لباسشویی","اتو","قابلمه","ماهیتابه","قاشق","چنگال","چاقو","بشقاب","لیوان","قوری","سماور","بالش","پتو","تشک","دمپایی","چتر","کلید","قفل","ساعت دیواری","گلدان","شومینه","کولر","بخاری","پنکه","میز ناهارخوری","تخت"],
+  "وسایل و ابزار": ["چکش","پیچ‌گوشتی","آچار","اره","دریل","متر","چسب","قیچی","سوزن","نخ","کلاه ایمنی","فرمان","لاستیک","باتری","شارژر","هدفون","دوربین","موبایل","لپ‌تاپ","ماوس","کیبورد","پرینتر","چراغ‌قوه","ریسمان","طناب","نردبان","فلاسک","کوله‌پشتی","چمدان","عینک","ساعت مچی","کیف","کفش","کلاه","دستکش"],
+  "ورزش": ["فوتبال","والیبال","بسکتبال","تنیس","پینگ‌پنگ","بدمینتون","کشتی","جودو","کاراته","بوکس","شنا","دوچرخه‌سواری","اسکی","اسکیت","ژیمناستیک","وزنه‌برداری","تیراندازی","کمانگیری","شطرنج","گلف","بیسبال","هندبال","دو ماراتن","پارکور","کوهنوردی","غواصی","قایقرانی","اسب‌سواری","موج‌سواری","شمشیربازی"],
+  "وسیله نقلیه": ["ماشین","اتوبوس","مترو","قطار","هواپیما","هلیکوپتر","کشتی","قایق","موتورسیکلت","دوچرخه","تاکسی","آمبولانس","کامیون","تراکتور","اسکوتر","بالن","موشک","زیردریایی","ماشین آتش‌نشانی","جرثقیل","تله‌کابین","واگن","گاری","درشکه","اسکله"],
+  "طبیعت و آب‌وهوا": ["باران","برف","تگرگ","رعد و برق","مه","طوفان","زلزله","آتشفشان","سیل","رودخانه","دریاچه","آبشار","اقیانوس","جزیره","صحرا","دره","تپه","ماه","خورشید","ستاره","ستاره دنباله‌دار","رنگین‌کمان","شفق","درخت","گل رز","کاکتوس","چمن","صخره","شن","یخچال طبیعی"],
+  "سرگرمی و فرهنگ": ["نقاشی","شعر","رمان","فیلم ترسناک","کارتون","انیمیشن","موسیقی","گیتار","پیانو","تار","سنتور","دف","ویولن","تئاتر","سیرک","جادوگر","پازل","لگو","بازی ورق","منچ","مافیا","حافظ","فردوسی","نوروز","یلدا","چهارشنبه‌سوری","سفره هفت‌سین","عروسی","جشن تولد"],
+  "مدرسه و علم": ["کتاب","دفتر","مداد","خودکار","پاک‌کن","تخته سیاه","گچ","کیف مدرسه","خط‌کش","پرگار","گونیا","ماشین‌حساب","کره زمین","نقشه","میکروسکوپ","تلسکوپ","آزمایشگاه","کلاس","زنگ تفریح","امتحان","کارنامه","کسر","مثلث","دایره","ربات","اتم","جاذبه","الکتریسیته","آهنربا","فسیل"]
+};
+
+const ALL = [];
+for (const [cat, list] of Object.entries(WORDS)) {
+  for (const w of list) ALL.push({ word: w, cat });
+}
+
+/* ---------- Secure, unbiased randomness ---------- */
+function rnd(n) {
+  const limit = Math.floor(4294967296 / n) * n;
+  const buf = new Uint32Array(1);
+  let x;
+  do { crypto.getRandomValues(buf); x = buf[0]; } while (x >= limit);
+  return x % n;
+}
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = rnd(i + 1);
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+/* A fresh independent draw every round: spies are picked purely at random */
+function pickSpies(players, spies) {
+  const ids = Array.from({ length: players }, (_, i) => i);
+  return new Set(shuffle(ids).slice(0, spies));
+}
+let wordPool = [];
+function nextWord() {
+  if (wordPool.length === 0) wordPool = shuffle(ALL); // no repeats until the whole bank is used
+  return wordPool.pop();
+}
+
+/* ---------- State ---------- */
+const fa = n => Number(n).toLocaleString("fa-IR", { useGrouping: false });
+const app = document.getElementById("app");
+let cfg = { players: 5, spies: 1, rounds: 3, showCatToSpy: false, timerMin: 0, names: [] };
+const nm = i => ((cfg.names[i] || "").trim()) || ("بازیکن " + fa(i + 1));
+const esc = t => String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- Sound ---------- */
+let actx = null;
+function unlockAudio() {
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+  } catch (e) {}
+}
+function beep(freq, start, dur, vol = 0.45) {
+  if (!actx) return;
+  const t = actx.currentTime + start;
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = "square"; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(actx.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+function alarm() {
+  unlockAudio();
+  for (let i = 0; i < 6; i++) { beep(880, i * 0.5, 0.2); beep(660, i * 0.5 + 0.22, 0.2); }
+  if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 300]);
+}
+
+/* ---------- Keep screen awake ---------- */
+let wl = null;
+async function keepAwake() {
+  try {
+    if ("wakeLock" in navigator && !wl) {
+      wl = await navigator.wakeLock.request("screen");
+      wl.addEventListener("release", () => { wl = null; });
+    }
+  } catch (e) {}
+}
+function releaseAwake() { if (wl) { wl.release().catch(() => {}); wl = null; } }
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && game) keepAwake();
+});
+let game = null;
+let timerId = null;
+
+let lastTick = -1;
+function beepTick(left) { if (left !== lastTick) { lastTick = left; beep(1000, 0, 0.08, 0.25); } }
+function clearTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+function go(html) { clearTimer(); app.innerHTML = html; window.scrollTo(0, 0); }
+
+/* ---------- Screens ---------- */
+function stepper(id, value, min, max) {
+  return `<div class="stepper">
+    <button type="button" data-step="${id}" data-d="1" aria-label="افزایش">+</button>
+    <input id="${id}" type="number" inputmode="numeric" min="${min}" max="${max}" value="${value}">
+    <button type="button" data-step="${id}" data-d="-1" aria-label="کاهش">−</button>
+  </div>`;
+}
+
+function setupScreen(err = "") {
+  go(`
+    <img class="banner" src="family.jpg" alt="خانواده فرخی‌ها">
+    <div class="brand"><img src="icon.svg" alt="" width="84" height="84"><div><h1>جاسوس‌خانه</h1><div class="muted">مخصوص خانواده فرخی‌ها</div></div></div>
+    <p class="muted">همه کلمه را می‌بینند، جز جاسوس. با سؤال و جواب جاسوس را پیدا کنید.</p>
+    <div class="panel">
+      <div class="row"><label for="players">تعداد بازیکن‌ها</label>${stepper("players", cfg.players, 3, 30)}</div>
+      <div class="row"><label for="spies">تعداد جاسوس‌ها</label>${stepper("spies", cfg.spies, 1, 29)}</div>
+      <div class="row"><label for="rounds">تعداد دورها</label>${stepper("rounds", cfg.rounds, 1, 50)}</div>
+      <div class="row"><label for="timerMin">تایمر بحث (دقیقه، ۰ = بدون تایمر)</label>${stepper("timerMin", cfg.timerMin, 0, 30)}</div>
+      <label class="toggle"><input type="checkbox" id="showCatToSpy" ${cfg.showCatToSpy ? "checked" : ""}> نمایش موضوع کلمه به جاسوس</label>
+    </div>
+    <div class="panel">
+      <h2 style="font-size:17px">اسم بازیکن‌ها (اختیاری)</h2>
+      <p class="muted">خالی بگذاری، «بازیکن ۱»، «بازیکن ۲» و... نمایش داده می‌شود.</p>
+      <div id="names"></div>
+    </div>
+    <div class="error" id="err" role="alert">${err}</div>
+    <button class="btn" id="start">شروع بازی</button>
+    <p class="muted center" style="margin-top:14px">بانک کلمات: ${fa(ALL.length)} کلمه در ${fa(Object.keys(WORDS).length)} موضوع</p>
+  `);
+  const renderNames = () => {
+    const n = Math.min(30, Math.max(0, parseInt(document.getElementById("players").value, 10) || 0));
+    const box = document.getElementById("names");
+    box.innerHTML = "";
+    for (let i = 0; i < n; i++) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const lab = document.createElement("label");
+      lab.textContent = "نفر " + fa(i + 1);
+      lab.htmlFor = "name" + i;
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.id = "name" + i; inp.maxLength = 20;
+      inp.className = "nameinput";
+      inp.placeholder = "بازیکن " + fa(i + 1);
+      inp.value = cfg.names[i] || "";
+      inp.addEventListener("input", () => { cfg.names[i] = inp.value; });
+      row.append(lab, inp);
+      box.appendChild(row);
+    }
+  };
+  renderNames();
+  document.getElementById("players").addEventListener("input", renderNames);
+  app.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+    const inp = document.getElementById(b.dataset.step);
+    const v = (parseInt(inp.value, 10) || 0) + Number(b.dataset.d);
+    inp.value = Math.min(Number(inp.max), Math.max(Number(inp.min), v));
+    if (b.dataset.step === "players") renderNames();
+  }));
+  document.getElementById("start").addEventListener("click", () => {
+    const players = parseInt(document.getElementById("players").value, 10);
+    const spies = parseInt(document.getElementById("spies").value, 10);
+    const rounds = parseInt(document.getElementById("rounds").value, 10);
+    const timerMin = parseInt(document.getElementById("timerMin").value, 10) || 0;
+    const showCatToSpy = document.getElementById("showCatToSpy").checked;
+    cfg = { players: players || 0, spies: spies || 0, rounds: rounds || 0, showCatToSpy, timerMin, names: cfg.names };
+    if (!(players >= 3 && players <= 30)) return setupScreen("تعداد بازیکن‌ها باید بین ۳ تا ۳۰ باشد.");
+    if (!(spies >= 1)) return setupScreen("حداقل یک جاسوس لازم است.");
+    if (spies >= players) return setupScreen("تعداد جاسوس‌ها باید کمتر از تعداد بازیکن‌ها باشد.");
+    if (!(rounds >= 1 && rounds <= 50)) return setupScreen("تعداد دورها باید بین ۱ تا ۵۰ باشد.");
+    if (timerMin < 0 || timerMin > 30) return setupScreen("تایمر باید بین ۰ تا ۳۰ دقیقه باشد.");
+    game = { round: 0 };
+    unlockAudio();
+    keepAwake();
+    startRound();
+  });
+}
+
+function startRound() {
+  game.round += 1;
+  const w = nextWord();
+  game.word = w.word;
+  game.cat = w.cat;
+  game.spies = pickSpies(cfg.players, cfg.spies);
+  game.starter = rnd(cfg.players);
+  game.player = 0;
+  handoffScreen();
+}
+
+function progressBar() {
+  const pct = ((game.round - 1) / cfg.rounds) * 100;
+  return `<div class="muted">دور ${fa(game.round)} از ${fa(cfg.rounds)}</div>
+          <div class="progress"><div style="width:${pct}%"></div></div>`;
+}
+
+function handoffScreen() {
+  go(`
+    ${progressBar()}
+    <p class="muted center">گوشی را به این بازیکن بدهید:</p>
+    <div class="big-name">${esc(nm(game.player))}</div>
+    <p class="muted center">بقیه نگاه نکنند.</p>
+    <button class="btn" id="go">آماده‌ام</button>
+  `);
+  document.getElementById("go").addEventListener("click", roleScreen);
+}
+
+function roleScreen() {
+  const isSpy = game.spies.has(game.player);
+  const last = game.player === cfg.players - 1;
+  let inner;
+  if (isSpy) {
+    inner = `<div class="stamp" id="role">جاسوس</div>` +
+      (cfg.showCatToSpy ? `<div class="cat" style="margin-top:14px">موضوع: ${game.cat}</div>` : `<p class="muted" style="margin-top:14px">کلمه را نمی‌دانی. خودت را لو نده!</p>`);
+  } else {
+    inner = `<div class="cat">موضوع: ${game.cat}</div><div class="word" id="role">${game.word}</div>`;
+  }
+  go(`
+    ${progressBar()}
+    <h2 class="center">${esc(nm(game.player))}</h2>
+    <div class="dossier">
+      <span class="tab">محرمانه</span>
+      ${inner}
+      <button class="cover" id="cover">برای دیدن نقش لمس کنید</button>
+    </div>
+    <button class="btn" id="next" style="visibility:hidden">${last ? "همه دیدند، شروع بحث" : "مخفی کن و نوبت بعدی"}</button>
+  `);
+  document.getElementById("cover").addEventListener("click", () => {
+    document.getElementById("cover").remove();
+    document.getElementById("role").classList.add("pop");
+    document.getElementById("next").style.visibility = "visible";
+    document.getElementById("next").focus();
+  });
+  document.getElementById("next").addEventListener("click", () => {
+    if (last) discussScreen(); else { game.player += 1; handoffScreen(); }
+  });
+}
+
+function discussScreen() {
+  const timerHtml = cfg.timerMin > 0 ? `<div class="timer" id="timer"></div>` : "";
+  go(`
+    ${progressBar()}
+    <h2 class="center">وقت بحث!</h2>
+    <p class="center"><b>${esc(nm(game.starter))}</b> بحث را شروع می‌کند. به نوبت از هم سؤال بپرسید و جاسوس را پیدا کنید.</p>
+    ${timerHtml}
+    <button class="btn" id="reveal">نمایش جاسوس‌ها</button>
+  `);
+  if (cfg.timerMin > 0) {
+    const endAt = Date.now() + cfg.timerMin * 60000;
+    const el = document.getElementById("timer");
+    let fired = false;
+    const draw = () => {
+      const left = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+      if (left > 0) {
+        el.textContent = fa(Math.floor(left / 60)).padStart(2, "۰") + ":" + fa(left % 60).padStart(2, "۰");
+        if (left <= 5) beepTick(left);
+      } else if (!fired) {
+        fired = true;
+        el.textContent = "زمان تمام شد";
+        alarm();
+        clearTimer();
+      }
+    };
+    draw();
+    timerId = setInterval(draw, 250);
+  }
+  document.getElementById("reveal").addEventListener("click", revealScreen);
+}
+
+function revealScreen() {
+  const spyList = [...game.spies].sort((a, b) => a - b).map(i => `<span class="chip">${esc(nm(i))}</span>`).join("");
+  const finished = game.round >= cfg.rounds;
+  go(`
+    ${progressBar()}
+    <h2 class="center">${game.spies.size > 1 ? "جاسوس‌ها" : "جاسوس"}</h2>
+    <div class="spies">${spyList}</div>
+    <div class="dossier" style="min-height:160px">
+      <span class="tab">کلمه</span>
+      <div class="cat">موضوع: ${game.cat}</div>
+      <div class="word">${game.word}</div>
+    </div>
+    <button class="btn" id="next">${finished ? "پایان بازی" : "دور بعد"}</button>
+  `);
+  document.getElementById("next").addEventListener("click", () => finished ? endScreen() : startRound());
+}
+
+function endScreen() {
+  releaseAwake();
+  go(`
+    <h1>بازی تمام شد</h1>
+    <p>${fa(cfg.rounds)} دور بازی کردید. دوباره بازی می‌کنید؟</p>
+    <button class="btn" id="again">بازی جدید</button>
+  `);
+  document.getElementById("again").addEventListener("click", () => setupScreen());
+}
+
+setupScreen();
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
